@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TOKUYAMA ZOO PURIKURA</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#fff0f7;color:#684d68;font-family:system-ui,"Yu Gothic",sans-serif}header{padding:16px 5%;background:white;border-bottom:3px solid #ffd2e5;color:#e85d9c;font-weight:900;letter-spacing:.12em}
+main{max-width:1120px;margin:22px auto;padding:0 14px}.hero{text-align:center}.hero h1{color:#e85d9c}.layout{display:grid;grid-template-columns:1fr 1fr;gap:16px}.panel{background:#fff;border:3px solid #ffd4e7;border-radius:22px;padding:16px;box-shadow:0 6px 0 #f4c2da}h2,h3{color:#dc639d}h2{font-size:16px;margin:0 0 12px}.booth{padding:12px;background:linear-gradient(135deg,#ffe2ef,#e9e2ff);border-radius:17px}
+#stage{position:relative;width:min(100%,430px);aspect-ratio:4/5;margin:auto;overflow:hidden;border:8px solid white;border-radius:14px;background:linear-gradient(145deg,#fbd7e8,#d9eafa)}
+#camera,#still{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}#camera{display:none;z-index:1;transform:scaleX(-1)}#still{display:none;z-index:2}
+#placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#dc639d;z-index:1}#placeholder b{font-size:62px}
+#frame{position:absolute;inset:0;z-index:4;pointer-events:none;border:12px solid #ffb7d6}
+#frame:after{content:"♡ TOKUYAMA ZOO ♡";position:absolute;bottom:8px;left:0;right:0;text-align:center;color:white;font-weight:900;text-shadow:0 2px 5px #9a4b7b}
+#caption{position:absolute;z-index:6;top:13px;left:50%;transform:translateX(-50%);white-space:nowrap;background:#fffdf0e8;border-radius:25px;padding:6px 13px;color:#df639d;font-weight:bold}
+#overlay{position:absolute;inset:0;z-index:7;pointer-events:none}.stamp{position:absolute;pointer-events:auto;touch-action:none;cursor:grab;user-select:none;line-height:1;text-shadow:0 2px 5px #fff;transform:translate(-50%,-50%)}
+#count{display:none;position:absolute;inset:0;z-index:10;align-items:center;justify-content:center;background:#ffffff55;color:white;font-size:100px;font-weight:bold;text-shadow:0 4px 15px #d94d8d}
+.row{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin:10px 0}.choice,button,.filebtn{border:2px solid #f5d6e5;border-radius:13px;padding:8px 10px;background:#fff8fb;color:#a77d9d;font-weight:bold;cursor:pointer;font-size:12px}.choice.active{background:#ffe5f0;border-color:#ed76ab;color:#d84f91}button.primary,.filebtn.primary{border:0;border-radius:24px;padding:11px 15px;background:linear-gradient(#ff9ec5,#f16ca7);color:white}.alt{background:linear-gradient(#c6b5ff,#a18be8)!important;color:white!important;border:0!important}
+.group{padding:11px 0;border-bottom:1px dashed #f1c6dc}.group:last-child{border:0}.group h3{font-size:13px;margin:0 0 8px}.note{font-size:11px;color:#a982a1;line-height:1.55}input[type=range]{width:100%;accent-color:#ed70a8}label.range{display:block;font-size:12px;margin:8px 2px}.thumbs{display:flex;gap:7px;justify-content:center;margin-top:8px}.thumbs img{width:55px;height:70px;object-fit:cover;border:3px solid #f4c8dc;border-radius:8px;cursor:pointer}.thumbs img.selected{border-color:#e85b9c}#upload{display:none}
+@media(max-width:760px){.layout{grid-template-columns:1fr}}
+</style></head><body>
+<header>♡ TOKUYAMA ZOO PURIKURA ♡</header><main>
+<div class="hero"><h1>どうぶつたちと、はいチーズ！🐾</h1><p>ここでしか撮れない！徳山動物園限定プリクラ</p></div>
+<div class="layout">
+<section class="panel"><h2>♡ PHOTO BOOTH</h2><div class="booth"><div id="stage">
+<video id="camera" autoplay playsinline muted></video><img id="still" alt="撮影写真">
+<div id="placeholder"><b>🐯 🐘 🦒</b><strong>HELLO! ZOO FRIENDS ♡</strong><small>カメラを起動するとここに映ります</small></div>
+<div id="caption">ZOO DAY! ♡</div><div id="overlay"></div><div id="frame"></div><div id="count">3</div>
+</div></div>
+<div class="thumbs" id="thumbs"></div>
+<div class="row"><button class="primary" id="start">📷 カメラを起動</button><button class="alt" id="shoot">3秒カウントで3枚撮影</button></div>
+<div class="row"><label class="filebtn" for="upload">写真を選ぶ</label><input id="upload" type="file" accept="image/*"><button id="save">画像を保存 ♡</button></div>
+<p class="note" id="status">カメラはHTTPSまたはlocalhostで開き、ブラウザのカメラ利用を許可してください。</p>
+</section>
+<section class="panel"><h2>♡ ZOO DECORATION</h2>
+<div class="group"><h3>① 動物園限定フレーム</h3><div class="row" id="frames">
+<button class="choice active" data-frame="pink">💗 さくらピンク</button><button class="choice" data-frame="tiger">🐯 トラしま</button><button class="choice" data-frame="giraffe">🦒 キリン柄</button><button class="choice" data-frame="zebra">🦓 シマウマ</button><button class="choice" data-frame="elephant">🐘 ゾウさん</button><button class="choice" data-frame="lion">🦁 ライオン</button><button class="choice" data-frame="jungle">🌿 ジャングル</button><button class="choice" data-frame="flower">🌸 お花畑</button><button class="choice" data-frame="paw">🐾 あしあと</button>
+</div></div>
+<div class="group"><h3>② 動物園限定スタンプ（選んで写真をタップ）</h3><div class="row" id="stamps">
+<button class="choice" data-stamp="🐯">🐯 トラ</button><button class="choice" data-stamp="🦁">🦁 ライオン</button><button class="choice" data-stamp="🐘">🐘 ゾウ</button><button class="choice" data-stamp="🦒">🦒 キリン</button><button class="choice" data-stamp="🦓">🦓 シマウマ</button><button class="choice" data-stamp="🐻">🐻 クマ</button><button class="choice" data-stamp="🦦">🦦 カワウソ</button><button class="choice" data-stamp="🐧">🐧 ペンギン</button><button class="choice" data-stamp="🐵">🐵 サル</button><button class="choice" data-stamp="🦉">🦉 フクロウ</button><button class="choice" data-stamp="🦋">🦋 チョウ</button><button class="choice" data-stamp="🐾">🐾 足あと</button><button class="choice" data-stamp="🌿">🌿 葉っぱ</button><button class="choice" data-stamp="🌳">🌳 木</button><button class="choice" data-stamp="🦴">🦴 骨</button><button class="choice" data-stamp="🥕">🥕 にんじん</button><button class="choice" data-stamp="🍌">🍌 バナナ</button><button class="choice" data-stamp="🎟️">🎟️ 入園記念</button><button class="choice" data-stamp="💖">💖 ハート</button><button class="choice" data-stamp="✨">✨ キラキラ</button>
+</div><p class="note">スタンプは写真をタップして配置。置いたスタンプはドラッグで移動できます。選択中のスタンプサイズは下のスライダーで調整できます。</p>
+<label class="range">スタンプサイズ <span id="stampSizeText">48</span>px<input id="stampSize" type="range" min="24" max="100" value="48"></label>
+<div class="row"><button id="removeStamps">スタンプを全部消す</button></div>
+</div>
+<div class="group"><h3>③ プリクラ加工</h3><div class="row" id="filters"><button class="choice active" data-filter="natural">ナチュラル</button><button class="choice" data-filter="soft">ふんわり</button><button class="choice" data-filter="warm">あったか</button><button class="choice" data-filter="mono">レトロ</button><button class="choice" data-filter="vivid">💖 バチバチ盛れ</button></div>
+<label class="range">👀 デカ目風 <span id="eyeText">ON</span><input id="eye" type="range" min="0" max="45" value="20"></label><label class="range">✨ 明るさ <span id="brightText">110%</span><input id="bright" type="range" min="90" max="140" value="110"></label>
+</div>
+<div class="group"><h3>④ メッセージ</h3><div class="row" id="captions"><button class="choice active" data-caption="ZOO DAY! ♡">ZOO DAY!</button><button class="choice" data-caption="だいすきっ♡">だいすきっ♡</button><button class="choice" data-caption="また来るね！">また来るね！</button><button class="choice" data-caption="BEST FRIENDS ✧">BEST FRIENDS</button></div></div>
+</section></div></main>
+<script>
+const $=s=>document.querySelector(s),video=$('#camera'),still=$('#still'),stage=$('#stage'),overlay=$('#overlay');
+let stream=null,shots=[],filter='natural',selectedStamp=null,stampSize=48,frame='pink',drag=null;
+const filterCss={natural:'brightness(1.07) saturate(1.12)',soft:'brightness(1.18) saturate(1.2) contrast(.95)',warm:'sepia(.18) saturate(1.3) brightness(1.08)',mono:'grayscale(1) contrast(1.08)',vivid:'brightness(1.2) saturate(1.85) contrast(1.18)'};
+function status(t){$('#status').textContent=t}
+function applyFilter(){let f=filterCss[filter]||filterCss.natural;let b=Number($('#bright').value);let eye=Number($('#eye').value);let eyeFx=eye?' saturate(1.12)':'';let css=f+' brightness('+(b/110)+')'+eyeFx;video.style.filter=css;still.style.filter=css}
+$('#start').onclick=async()=>{try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:false});video.srcObject=stream;await video.play();video.style.display='block';still.style.display='none';$('#placeholder').style.display='none';applyFilter();status('ライブプレビュー中！フレームや加工を選んでね ♡')}catch(e){status('カメラを起動できません。HTTPSまたはlocalhostで開き、カメラを許可してください。')}};
+function snap(){let c=document.createElement('canvas'),w=video.videoWidth||640,h=video.videoHeight||800;c.width=w;c.height=h;let x=c.getContext('2d');x.filter=filterCss[filter]+' brightness('+(Number($('#bright').value)/110)+')';x.translate(w,0);x.scale(-1,1);x.drawImage(video,0,0,w,h);return c.toDataURL('image/jpeg',.94)}
+function showShot(url,i){still.src=url;still.style.display='block';video.style.display='none';$('#placeholder').style.display='none';[...$('#thumbs').children].forEach((el,j)=>el.classList.toggle('selected',i===j))}
+$('#shoot').onclick=async()=>{if(!stream){status('先にカメラを起動してください');return}let c=$('#count');shots=[];$('#thumbs').innerHTML='';for(let n=3;n>0;n--){c.textContent=n;c.style.display='flex';await new Promise(r=>setTimeout(r,650))}c.style.display='none';for(let i=0;i<3;i++){shots.push(snap());if(i<2)await new Promise(r=>setTimeout(r,550))}shots.forEach((url,i)=>{let im=new Image();im.src=url;im.onclick=()=>showShot(url,i);$('#thumbs').appendChild(im)});showShot(shots[0],0);status('3枚撮影しました！お気に入りを選んでね ♡')};
+$('#upload').onchange=e=>{let f=e.target.files[0];if(!f)return;still.src=URL.createObjectURL(f);still.style.display='block';video.style.display='none';$('#placeholder').style.display='none'};
+$('#filters').onclick=e=>{let b=e.target.closest('[data-filter]');if(!b)return;filter=b.dataset.filter;$('#filters').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));applyFilter()};
+$('#bright').oninput=e=>{$('#brightText').textContent=e.target.value+'%';applyFilter()};$('#eye').oninput=e=>{$('#eyeText').textContent=e.target.value==0?'OFF':'ON';applyFilter()};
+const frameStyles={pink:{border:'12px solid #ffb7d6',background:'transparent'},tiger:{border:'18px dashed #f39a24',background:'transparent'},giraffe:{border:'18px dotted #d99b37',background:'transparent'},zebra:{border:'16px double #292929',background:'transparent'},elephant:{border:'18px ridge #a8b6c9',background:'transparent'},lion:{border:'18px ridge #e8a83d',background:'transparent'},jungle:{border:'18px solid #438a5b',background:'transparent'},flower:{border:'18px dotted #f28cb8',background:'transparent'},paw:{border:'18px dashed #9b7bc7',background:'transparent'}};
+$('#frames').onclick=e=>{let b=e.target.closest('[data-frame]');if(!b)return;frame=b.dataset.frame;let s=frameStyles[frame];$('#frame').style.border=s.border;$('#frame').style.background=s.background;$('#frames').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b))};
+$('#stamps').onclick=e=>{let b=e.target.closest('[data-stamp]');if(!b)return;selectedStamp=b.dataset.stamp;$('#stamps').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));status(selectedStamp+' を選択中！写真の好きな場所をタップしてね')};
+$('#stampSize').oninput=e=>{stampSize=Number(e.target.value);$('#stampSizeText').textContent=stampSize};
+stage.addEventListener('click',e=>{if(!selectedStamp||e.target.closest('.stamp'))return;let r=stage.getBoundingClientRect(),s=document.createElement('span');s.className='stamp';s.textContent=selectedStamp;s.style.left=(e.clientX-r.left)+'px';s.style.top=(e.clientY-r.top)+'px';s.style.fontSize=stampSize+'px';overlay.appendChild(s);makeDraggable(s)});
+function makeDraggable(el){el.addEventListener('pointerdown',e=>{e.stopPropagation();drag={el,dx:e.clientX-parseFloat(el.style.left)-stage.getBoundingClientRect().left,dy:e.clientY-parseFloat(el.style.top)-stage.getBoundingClientRect().top};el.setPointerCapture(e.pointerId)});el.addEventListener('pointermove',e=>{if(!drag||drag.el!==el)return;let r=stage.getBoundingClientRect();el.style.left=(e.clientX-r.left-drag.dx+r.left)+'px';el.style.top=(e.clientY-r.top-drag.dy+r.top)+'px'});['pointerup','pointercancel'].forEach(k=>el.addEventListener(k,()=>drag=null))}
+$('#removeStamps').onclick=()=>overlay.innerHTML='';
+$('#captions').onclick=e=>{let b=e.target.closest('[data-caption]');if(!b)return;$('#caption').textContent=b.dataset.caption;$('#captions').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b))};
+$('#save').onclick=()=>{let c=document.createElement('canvas'),w=720,h=900;c.width=w;c.height=h;let x=c.getContext('2d');x.fillStyle='#ffe1ef';x.fillRect(0,0,w,h);x.save();x.beginPath();x.rect(0,0,w,h);x.clip();let src=still.style.display!=='none'?still:video;if(src===still&&still.complete)x.drawImage(still,0,0,w,h);else if(stream){x.translate(w,0);x.scale(-1,1);x.drawImage(video,0,0,w,h)}x.restore();x.strokeStyle=frameStyles[frame].border.includes('#')?frameStyles[frame].border.match(/#[0-9a-fA-F]{3,8}/)?.[0]:'#ffb7d6';x.lineWidth=24;x.strokeRect(12,12,w-24,h-24);x.fillStyle='#df639d';x.font='bold 32px sans-serif';x.textAlign='center';x.fillText($('#caption').textContent,w/2,55);overlay.querySelectorAll('.stamp').forEach(s=>{let r=stage.getBoundingClientRect(),px=parseFloat(s.style.left)/r.width*w,py=parseFloat(s.style.top)/r.height*h;x.font=(parseFloat(s.style.fontSize)*w/r.width)+'px sans-serif';x.fillText(s.textContent,px,py)});x.fillText('♡ TOKUYAMA ZOO ♡',w/2,h-24);let a=document.createElement('a');a.href=c.toDataURL('image/png');a.download='tokuyama-zoo-purikura.png';a.click();status('プリクラ画像を保存しました ♡')};
+</script></body></html>
